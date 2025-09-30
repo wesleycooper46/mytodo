@@ -2,11 +2,15 @@ import axios from "axios";
 import Navbar from "../components/navbar";
 import "../index.css";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [task, setTask] = useState([]);
 
+  // const navigate = useNavigate();
   const userid = Number(localStorage.getItem("user_id"));
+
   console.log(userid);
 
   const StatusChange = async (status, taskid) => {
@@ -76,6 +80,7 @@ export default function Dashboard() {
                       <option value="in_progress">In Progress</option>
                       <option value="done">Done</option>
                     </select>
+                    <Link to={`/task/${task.id}`}>Edit</Link>
                   </li>
                 ) : null
               )}

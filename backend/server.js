@@ -88,7 +88,7 @@ app.get("/alltask", (req, res) => {
 app.put("/statuschange", (req, res) => {
   const { status, taskid } = req.body;
   const sql = "UPDATE tasks SET status = ? WHERE id = ?";
-  console.log(status, taskid)
+  console.log(status, taskid);
 
   db.query(sql, [status, taskid], (err) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -96,6 +96,32 @@ app.put("/statuschange", (req, res) => {
       message: "Status Changed!",
     });
   });
+});
+
+app.get("/task/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "SELECT * FROM tasks WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    console.log(result[0]);
+    res.json(result[0]);
+  });
+});
+
+app.put("/task/edittaskid=:id", (req, res) => {
+  const { title, detail, priority, duedate } = req.body;
+  const { id } = req.params;
+  const sql =
+    "UPDATE tasks SET title = ?, detail = ?, priority = ?, due_date = ? WHERE id = ?";
+
+  db.query(sql, [ title, detail, priority, duedate, id], (err) => {
+    if (err) return res.status(500).json({error: err.message})
+    console.log("Update Done")
+    res.json({
+      message: "Update Task Completed!"
+    })
+  })
 });
 
 app.listen(PORT, () => console.log("Server Running At Port 5000"));
