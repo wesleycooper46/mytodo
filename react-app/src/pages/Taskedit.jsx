@@ -6,32 +6,37 @@ import axios from "axios";
 
 const EditTask = () => {
   const { id } = useParams();
-  const [ title, setTitle ] = useState("");
-  const [ detail, setDetail ] = useState("");
-  const [ priority, setPriority ] = useState("");
-  const [ duedate, setDuedate ] = useState("")
-    // const { task, setTask} = useState([])
+  const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState("");
+  const [priority, setPriority] = useState("");
+  const [duedate, setDuedate] = useState("");
+  // const { task, setTask} = useState([])
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const FetchDataByid = async() => {
-    const res = await axios.get(`http://localhost:5000/task/${id}`);
-    setTitle(res.data.title);
-    setDetail(res.data.detail);
-    setPriority(res.data.priority);
-    setDuedate(res.data.due_date);
-  }
-  FetchDataByid()
-  },[id])
+    const FetchDataByid = async () => {
+      const res = await axios.get(`http://localhost:5000/task/${id}`);
+      setTitle(res.data.title);
+      setDetail(res.data.detail);
+      setPriority(res.data.priority);
+      setDuedate(res.data.due_date);
+    };
+    FetchDataByid();
+  }, [id]);
 
-  const HandleSaveEditTask = async(e) => {
+  const HandleSaveEditTask = async (e) => {
     e.preventDefault();
-    console.log("data before update: ", title, detail, priority, duedate)
-    const res = await axios.put(`http://localhost:5000/task/edittaskid=${id}`, { title, detail, priority, duedate });
+    console.log("data before update: ", title, detail, priority, duedate);
+    const res = await axios.put(`http://localhost:5000/task/edittaskid=${id}`, {
+      title,
+      detail,
+      priority,
+      duedate,
+    });
     alert(res.data.message);
     navigate("/dashboard");
-  }
+  };
 
   return (
     <>

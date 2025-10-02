@@ -115,24 +115,24 @@ app.put("/task/edittaskid=:id", (req, res) => {
   const sql =
     "UPDATE tasks SET title = ?, detail = ?, priority = ?, due_date = ? WHERE id = ?";
 
-  db.query(sql, [ title, detail, priority, duedate, id], (err) => {
-    if (err) return res.status(500).json({error: err.message})
-    console.log("Update Done")
+  db.query(sql, [title, detail, priority, duedate, id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    console.log("Update Done");
     res.json({
-      message: "Update Task Completed!"
-    })
-  })
+      message: "Update Task Completed!",
+    });
+  });
 });
 
 app.get("/alldonetask", (req, res) => {
   const { userid } = req.query;
-  const sql = "SELECT * FROM tasks WHERE user_id = ? AND status = 'done'"
+  const sql = "SELECT * FROM tasks WHERE user_id = ? AND status = 'done'";
 
-  db.query(sql, [ userid ], (err, result) => {
-    if (err) return res.status(500).json({error: err.message});
+  db.query(sql, [userid], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
 
     res.json(result);
-  })
-})
+  });
+});
 
 app.listen(PORT, () => console.log("Server Running At Port 5000"));

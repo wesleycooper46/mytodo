@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav  className="bg-blue-400 p-5 grid grid-cols-5 items-center h-25">
+    <nav className="bg-blue-400 p-5 grid grid-cols-5 items-center h-25">
       <a href="" className="justify-self-start">
         <img
           src="/img/construction-and-tools.png"
