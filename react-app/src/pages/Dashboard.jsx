@@ -31,7 +31,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const Fetchdata = async () => {
+    const FetchAllTaskdata = async () => {
       try {
         const res = await axios.get("http://localhost:5000/alltask", {
           params: { userid },
@@ -43,7 +43,7 @@ export default function Dashboard() {
       }
     };
 
-    Fetchdata();
+    FetchAllTaskdata();
   }, [userid]);
 
   return (

@@ -10,7 +10,7 @@ const Addtask = () => {
   const [duedate, setDuedate] = useState("");
   const navigate = useNavigate();
 
-  const ClickAdd = async (e) => {
+  const ClickToAddTask = async (e) => {
     e.preventDefault();
     const userid = Number(localStorage.getItem("user_id"));
     console.log(userid);
@@ -42,7 +42,7 @@ const Addtask = () => {
       <div className="flex min-h-screen justify-center items-center">
         <div className="bg-blue-300 rounded-2xl p-8 w-full max-w-md gap">
           <h1>Add Your Task</h1>
-          <form onSubmit={ClickAdd}>
+          <form onSubmit={ClickToAddTask}>
             <label htmlFor="title">Title:</label>
             <input
               type="text"

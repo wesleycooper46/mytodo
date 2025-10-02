@@ -13,7 +13,7 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const ClickCreate = async (e) => {
+  const ClickCreateAccount = async (e) => {
     e.preventDefault();
 
     if (!firstname || !lastname || !username || !email || !password) {
@@ -47,7 +47,7 @@ const Register = () => {
       <div>
         <div>
           <h1>Create Account</h1>
-          <form onSubmit={ClickCreate}>
+          <form onSubmit={ClickCreateAccount}>
             <label htmlFor="firstname">First Name: </label>
             <input
               id="firstname"
