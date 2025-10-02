@@ -124,4 +124,15 @@ app.put("/task/edittaskid=:id", (req, res) => {
   })
 });
 
+app.get("/alldonetask", (req, res) => {
+  const { userid } = req.query;
+  const sql = "SELECT * FROM tasks WHERE user_id = ? AND status = 'done'"
+
+  db.query(sql, [ userid ], (err, result) => {
+    if (err) return res.status(500).json({error: err.message});
+
+    res.json(result);
+  })
+})
+
 app.listen(PORT, () => console.log("Server Running At Port 5000"));
