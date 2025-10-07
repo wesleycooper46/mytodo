@@ -1,5 +1,6 @@
 import "../index.css";
 import { NavLink, useNavigate } from "react-router-dom";
+import { assets } from "../assets/img/img";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -12,10 +13,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-400 p-5 grid grid-cols-5 items-center h-25">
+    <nav className="bg-blue-400 p-5 grid grid-cols-5 items-center h-24">
       <a href="" className="justify-self-start">
         <img
-          src="/img/construction-and-tools.png"
+          src={assets.weblogo}
           className="w-10 h-10"
           alt=""
         />
@@ -26,12 +27,12 @@ export default function Navbar() {
         </div>
         <NavLink to="/addtask">Add Task</NavLink>
         <NavLink to="/historytask">History</NavLink>
-        <NavLink to="/">Chat</NavLink>
+        <NavLink to="/chatbot">Chat</NavLink>
       </ul>
       <ul className="flex justify-center">
         <button
           onClick={LogoutClick}
-          className="p-2 m-2 bg-red-500 rounded-2xl"
+          className="p-2 m-2 bg-red-500 rounded-2xl cursor-pointer"
         >
           Logout
         </button>

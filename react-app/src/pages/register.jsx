@@ -44,57 +44,69 @@ const Register = () => {
   return (
     <>
       <Navbar />
-      <div>
-        <div>
-          <h1>Create Account</h1>
-          <form onSubmit={ClickCreateAccount}>
-            <label htmlFor="firstname">First Name: </label>
-            <input
-              id="firstname"
-              type="text"
-              value={firstname}
-              onChange={(e) => setFirstname(e.target.value)}
-            />
+      <div className="flex justify-center items-center min-h-screen bg-[#ede8f5]">
+        <div className="w-[700px] max-w-[92vw] border-[#ADBBDA] rounded-2xl p-6 bg-white">
+          <div className="pb-6">
+            <h1 className="font-bold text-2xl">Create Account</h1>
+          </div>
 
-            <label htmlFor="lastname">Last Name: </label>
-            <input
-              id="lastname"
-              type="text"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-            />
+          <form className="m-2" onSubmit={ClickCreateAccount}>
+            <div className="grid grid-cols-[100px_1fr_80px_1fr] gap-8 mb-4">
+              <label htmlFor="firstname">First Name: </label>
+              <input
+                id="firstname"
+                type="text"
+                value={firstname}
+                placeholder="Enter your first name"
+                onChange={(e) => setFirstname(e.target.value)}
+              />
 
-            <label htmlFor="username">Username: </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+              <label htmlFor="lastname">Last Name: </label>
+              <input
+                id="lastname"
+                type="text"
+                value={lastname}
+                placeholder="Enter your last name"
+                onChange={(e) => setLastname(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-[120px_1fr] gap-4">
+              <label htmlFor="username" className="w-[200px]">Username: </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                placeholder="Enter your username"
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                placeholder="Enter your password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-            <label htmlFor="confirmpassword">Confirm your Password</label>
-            <input
-              id="confirmpassword"
-              type="password"
-              value={confirmpassword}
-              onChange={(e) => setConfirmpassword(e.target.value)}
-            />
+              <label htmlFor="confirmpassword">Confirm your Password</label>
+              <input
+                id="confirmpassword"
+                type="password"
+                value={confirmpassword}
+                placeholder="Re-enter your password"
+                onChange={(e) => setConfirmpassword(e.target.value)}
+              />
+            </div>
 
             <button
               className="border-2 rounded-2xl pt-1 pl-2 pr-2 pb-1 m-2 hover:cursor-pointer"
@@ -103,6 +115,9 @@ const Register = () => {
               {" "}
               Create Account
             </button>
+            <div className="hover:text-blue-600 cursor-pointer" onClick={() => {navigate("/login")}}>
+              already have account?
+            </div>
           </form>
         </div>
       </div>
