@@ -2,10 +2,12 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-export default async function main(prompt = "What is full form of jsx?") {
+export default async function main(prompt) {
   const ai = new GoogleGenAI({
-    apiKey: "AIzaSyBkil0WF4yKOyf31aIVo3XPZ9xVyWZZXfA",
+    apiKey: import.meta.env.VITE_GEMINI_KEY,
   });
+
+  console.log("Gemini Key:", import.meta.env.VITE_GEMINI_KEY);
 
   const res = await ai.models.generateContent({
     model: "gemini-2.5-flash",
