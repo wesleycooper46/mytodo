@@ -22,7 +22,15 @@ export default function App() {
         <Route path="/historytask" element={<HistoryTask />} />
         <Route path="/task/:id" element={<EditTask />} />
         <Route
-          path="/chatbot"
+          path="/chatbot/:id"
+          element={
+            <ContextProvider>
+              <ChatBot />
+            </ContextProvider>
+          }
+        />
+        <Route
+          path="/chatbot/:id/:chatname"
           element={
             <ContextProvider>
               <ChatBot />

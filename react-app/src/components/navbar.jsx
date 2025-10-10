@@ -4,6 +4,7 @@ import { assets } from "../assets/img/img";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const userid = localStorage.getItem("user_id")
 
   const LogoutClick = () => {
     localStorage.removeItem("user_id");
@@ -27,7 +28,7 @@ export default function Navbar() {
         </div>
         <NavLink to="/addtask">Add Task</NavLink>
         <NavLink to="/historytask">History</NavLink>
-        <NavLink to="/chatbot">Chat</NavLink>
+        <NavLink to={`/chatbot/${userid}`}>Chat</NavLink>
       </ul>
       <ul className="flex justify-center">
         <button

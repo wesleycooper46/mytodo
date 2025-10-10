@@ -135,4 +135,17 @@ app.get("/alldonetask", (req, res) => {
   });
 });
 
+app.post("/createchat", (req, res) => {
+  const { userid, chatname } = req.body;
+  const sql = "INSERT INTO chatbot (user_id, chat_name) VALUES (?, ?)"
+
+  db.query(sql, [userid, chatname], (err) => {
+    if (err) return res.status(500).json({error: err.message});
+
+    res.json({
+      message: "Create Complete!",
+    })
+  })
+})
+
 app.listen(PORT, () => console.log("Server Running At Port 5000"));
