@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState } from "react";
 import main from "../config/gemini";
+import axios from "axios";
 
 export const Context = createContext(null);
 
@@ -9,14 +10,18 @@ const ContextProvider = (props) => {
   const [ botresult, setBotresult ] = useState("");
   const [ botresultresponse, setBotresultresponse ] = useState(false);
   const [ userinputprompt, setUserinputprompt ] = useState("")
+  const [ currentchatid, setCurrentchatid ] = useState("");
 
   const OnSentChatbot = async(userinput) => {
     setUserinputprompt(userinput)
-    const res = await main(userinput)
+    const botres = await main(userinput)
     setBotresultresponse(true);
+    setBotresult(botres);
+    //insertinputandresponsedatatodb
+    if (userinput, botres)
+      await axios.post("http://localhost:5000/insertchatresponse", { currentchatid ,userinput, botres })
     setUserinput("");
-    setBotresult(res);
-    return res;
+    
   }
 
   const ContextValue = {
@@ -25,7 +30,9 @@ const ContextProvider = (props) => {
     setUserinput,
     botresult,
     botresultresponse,
-    userinputprompt
+    userinputprompt,
+    setCurrentchatid,
+    currentchatid,
   };
 
   return (

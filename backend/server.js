@@ -139,12 +139,66 @@ app.post("/createchat", (req, res) => {
   const { userid, chatname } = req.body;
   const sql = "INSERT INTO chatbot (user_id, chat_name) VALUES (?, ?)"
 
-  db.query(sql, [userid, chatname], (err) => {
+  db.query(sql, [userid, chatname], (err, result) => {
     if (err) return res.status(500).json({error: err.message});
+
+    const chat_id = result.insertId;
 
     res.json({
       message: "Create Complete!",
+      chat_id
     })
+  })
+})
+
+app.delete("/task/deletetaskid=:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM tasks WHERE id = ?"
+
+  db.query(sql, [ id ], (err, result) => {
+    if (err) return res.status(500).json({error: err.message});
+
+    res.json({
+      message: "Delete Complete!"
+    })
+  })
+})
+
+app.get("/fetchchatlist", (req, res) => {
+  const { userid } = req.query;
+  const sql = "SELECT * FROM chatbot WHERE user_id = ?";
+
+  console.log("user_id to fetch chatlist : ", userid);
+
+  db.query(sql, [ userid ], (err, result) => {
+    if (err) return res.status(500).json({error: err.message});
+
+    res.json(result);
+  })
+})
+
+app.post("/insertchatresponse", (req, res) => {
+  const { currentchatid ,userinput, botres } = req.body;
+  const sql = "INSERT INTO chatbot_content (chat_id, userinput, botresponse) VALUES ( ?, ?, ? )"
+
+  db.query(sql, [currentchatid, userinput, botres], (err) => {
+    if (err) return res.status(500).json({error: err.message});
+
+    res.json({
+      message: "Insert Complete!"
+    })
+  })
+})
+
+app.get("/fetchchathistory", (req, res) => {
+  const { chatid } = req.query;
+  const sql = "SELECT * FROM chatbot_content WHERE chat_id = ?";
+
+  db.query(sql, [ chatid ], (err, result) => {
+    if (err) return res.status(500).json({error : err.message});
+
+    console.log(result)
+    res.json(result);
   })
 })
 

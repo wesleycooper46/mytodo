@@ -12,7 +12,7 @@ export default async function main(prompt) {
   const res = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     generationConfig: {
-      maxOutputTokens: 64,
+      maxOutputTokens: 16,
       temperature: 0.7
     },
     config: { responseModalities: ["TEXT"] },

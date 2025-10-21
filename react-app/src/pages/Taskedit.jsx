@@ -38,6 +38,13 @@ const EditTask = () => {
     navigate("/dashboard");
   };
 
+  const HandleDeleteTask = async (e) => {
+    e.preventDefault();
+    const res = await axios.delete(`http://localhost:5000/task/deletetaskid=${id}`);
+    alert(res.data.message);
+    navigate("/dashboard");
+  }
+
   return (
     <>
       <Navbar />
@@ -86,6 +93,7 @@ const EditTask = () => {
             />
 
             <button type="submit">Save</button>
+            <button type="button" onClick={HandleDeleteTask}>Delete</button>
           </form>
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function App() {
           }
         />
         <Route
-          path="/chatbot/:id/:chatname"
+          path="/chatbot/:chatid/:chatname"
           element={
             <ContextProvider>
               <ChatBot />

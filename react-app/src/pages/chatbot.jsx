@@ -1,20 +1,42 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChatSideBar from "../components/ChatSideBar";
 import Navbar from "../components/navbar";
 import { Context } from "../context/chatbotcontext";
 import { assets } from "../assets/img/img";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const ChatBot = () => {
+  const [ fetchchathistorydata, setFetchchathistorydata ] = useState([]);
   const {
     OnSentChatbot,
     userinput,
     setUserinput,
     botresult,
-    userinputprompt
+    userinputprompt,
+    setCurrentchatid,
+
   } = useContext(Context);
+
+  const { chatid } = useParams();
+
+  console.log("chat id : ", chatid);
+
+  setCurrentchatid(chatid);
 
   console.log("User Prompt: ", userinputprompt);
   console.log("Bot Response: ", botresult);
+
+  useEffect(() => {
+    const FetchChatHistory = async () => {
+      const res = await axios.get("http://localhost:5000/fetchchathistory", { params: { chatid } });
+      // console.log("fetch data : ", res.data);
+      setFetchchathistorydata(res.data);
+      console.log("fetch data : ", fetchchathistorydata);
+    };
+
+    FetchChatHistory();
+  }, [chatid, botresult]);
 
   return (
     <>
@@ -26,14 +48,25 @@ const ChatBot = () => {
             <div className="font-semibold text-lg">ChatBot Assistant</div>
           </nav>
           <main className="flex-1 overflow-y-auto p-4">
-            {botresult ? (
-              <div className="flex flex-col">
-                <p className="justify-end">-- {userinputprompt} --</p>
-                <pre className="whitespace-pre-wrap break-words">Chatbot -- {botresult}</pre>
+           
+
+            {fetchchathistorydata.map((row) => (
+              <div key={row.id} className="space-y-1">
+                <div className="text-right mt-4">
+                  <span className="inline-block rounded-lg bg-gray-100 px-3 py-2">
+                    {row.userinput}
+                  </span>
+                </div>
+                <div className="text-left mt-4">
+                  <pre className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 px-3 py-2">
+                    {row.botresponse}
+                  </pre>
+                </div>
               </div>
-            ) : 
-              <div>How Can I Help You bruh</div>
-            }
+            ))}
+
+            
+
           </main>
           <footer className="shrink-0 p-4 border-t flex flex-col gap-2">
             <div className="flex items-center gap-2">
