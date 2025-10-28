@@ -4,7 +4,7 @@ import { assets } from "../assets/img/img";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const userid = localStorage.getItem("user_id")
+  const userid = localStorage.getItem("user_id");
 
   const LogoutClick = () => {
     localStorage.removeItem("user_id");
@@ -14,26 +14,31 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-400 p-5 grid grid-cols-5 items-center h-24">
-      <a href="" className="justify-self-start">
-        <img
-          src={assets.weblogo}
-          className="w-10 h-10"
-          alt=""
-        />
+    <nav className="bg-blue-500 p-5 grid grid-cols-5 items-center h-24 shadow-md">
+      <a href="" className="justify-self-start flex items-center gap-2">
+        <img src={assets.weblogo} className="w-10 h-10 rounded-full" alt="" />
+        <span className="text-white font-semibold text-xl">Task Manager</span>
       </a>
-      <ul className="flex gap-4 justify-center col-span-3">
-        <div className=" hover:bg-blue-500">
+
+      <ul className="flex gap-6 justify-center col-span-3 text-white font-medium">
+        <li className="hover:text-yellow-200 transition">
           <NavLink to="/dashboard">Dashboard</NavLink>
-        </div>
-        <NavLink to="/addtask">Add Task</NavLink>
-        <NavLink to="/historytask">History</NavLink>
-        <NavLink to={`/chatbot/${userid}`}>Chat</NavLink>
+        </li>
+        <li className="hover:text-yellow-200 transition">
+          <NavLink to="/addtask">Add Task</NavLink>
+        </li>
+        <li className="hover:text-yellow-200 transition">
+          <NavLink to="/historytask">History</NavLink>
+        </li>
+        <li className="hover:text-yellow-200 transition">
+          <NavLink to={`/chatbot/${userid}`}>Chat</NavLink>
+        </li>
       </ul>
+
       <ul className="flex justify-center">
         <button
           onClick={LogoutClick}
-          className="p-2 m-2 bg-red-500 rounded-2xl cursor-pointer"
+          className="p-2 m-2 bg-red-500 hover:bg-red-600 text-white rounded-2xl cursor-pointer transition shadow-sm"
         >
           Logout
         </button>

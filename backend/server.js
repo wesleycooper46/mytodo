@@ -8,6 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// เชื่อม database mysql
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -15,13 +16,16 @@ const db = mysql.createConnection({
   database: "todo_project",
 });
 
+// default path โชว์สถานะว่ากำลัง run server
 app.get("/", (req, res) => res.send("Server Running!"));
 
+// path สำหรับ insert new user account ไปใน database
 app.post("/register", async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
   const sql =
-    "INSERT INTO Users (first_name, last_name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)";
-  const hashedPassword = await bcrypt.hash(password, 10);
+    "INSERT INTO Users (first_name, last_name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)"; // sql สำหรับ insert new account
+  // ใช้ libery bcrypt สำหรับ hash password ก่อนเก็บลง database
+  const hashedPassword = await bcrypt.hash(password, 10); // โครงสร้างหลัง hash จะเป็น $<version>$<cost>$<salt><hash>
 
   db.query(
     sql,
@@ -36,6 +40,7 @@ app.post("/register", async (req, res) => {
   );
 });
 
+// path สำหรับเทียบค่าจาก form login เทียบกับค่าใน database
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const sql = "SELECT * FROM Users WHERE username = ?";
@@ -46,7 +51,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
 
     console.log("results:", result);
-    const CheckHashedPassword = await bcrypt.compare(
+    const CheckHashedPassword = await bcrypt.compare( // นำค่า salt ของรหัสที่ hashed มาใช้เข้ารหัส password ที่ต้องการเทียบ ผลลัพธ์ออกมาเป็น true false
       String(password),
       String(result[0].password_hash)
     );
@@ -55,11 +60,12 @@ app.post("/login", async (req, res) => {
     console.log("UserID: ", result[0].id);
     res.json({
       message: "Login Successful!",
-      user_id: result[0].id,
+      user_id: result[0].id, // ส่งค่า userid ไปให้ frontend เก็บใน localstorage 
     });
   });
 });
 
+// path สำหรับ insert task ใหม่ของ user นั้นไปเก็บใน database
 app.post("/addtask", (req, res) => {
   const { tasktitle, detail, priority, duedate, userid } = req.body;
   const sql =
@@ -75,6 +81,7 @@ app.post("/addtask", (req, res) => {
   });
 });
 
+// path สำหรับ fetch task ทั้งหมดของ userid นั้นๆ
 app.get("/alltask", (req, res) => {
   const { userid } = req.query;
   const sql = "SELECT * FROM tasks WHERE user_id = ?";
@@ -85,6 +92,7 @@ app.get("/alltask", (req, res) => {
   });
 });
 
+// path สำหรับ update ข้อมูล status ของ task
 app.put("/statuschange", (req, res) => {
   const { status, taskid } = req.body;
   const sql = "UPDATE tasks SET status = ? WHERE id = ?";
@@ -98,6 +106,7 @@ app.put("/statuschange", (req, res) => {
   });
 });
 
+// path สำหรับ fetch ข้อมูล task เดิมของ user ก่อน edit 
 app.get("/task/:id", (req, res) => {
   const { id } = req.params;
   const sql = "SELECT * FROM tasks WHERE id = ?";
@@ -109,6 +118,7 @@ app.get("/task/:id", (req, res) => {
   });
 });
 
+// path สำหรับ update ข้อมูล task ที่ user edit
 app.put("/task/edittaskid=:id", (req, res) => {
   const { title, detail, priority, duedate } = req.body;
   const { id } = req.params;
@@ -124,6 +134,7 @@ app.put("/task/edittaskid=:id", (req, res) => {
   });
 });
 
+// path สำหรับ fetch ค่าของ task ที่มีสถานะ done
 app.get("/alldonetask", (req, res) => {
   const { userid } = req.query;
   const sql = "SELECT * FROM tasks WHERE user_id = ? AND status = 'done'";
@@ -135,6 +146,7 @@ app.get("/alldonetask", (req, res) => {
   });
 });
 
+// path สำหรับสร้าง chat ก่อน user จะคุยกับ chat
 app.post("/createchat", (req, res) => {
   const { userid, chatname } = req.body;
   const sql = "INSERT INTO chatbot (user_id, chat_name) VALUES (?, ?)"

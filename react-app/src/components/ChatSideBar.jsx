@@ -19,12 +19,21 @@ const ChatSideBar = () => {
         chatname,
       });
       alert(res.data.message);
-      // navigate(`/chatbot/${res.data.chat_id}/${chatname}`)
       setOpen(false);
     } catch (err) {
       console.log(err);
     }
   };
+
+  // const DeleteChat = async(chatid) => {
+  //   console.log("Chat ID On Delete : ", chatid);
+  //   try {
+  //     const res = await axios.delete("http://localhost:5000/deletechat", { chatid });
+  //     console.log(res.data.message);
+  //   } catch (err){
+  //     console.log(err)
+  //   }
+  // }
 
   useEffect(() => {
     const FetchChatList = async () => {
@@ -41,42 +50,74 @@ const ChatSideBar = () => {
 
   return (
     <>
-      <div className="bg-blue-100 flex-col inline-block h-[calc(100svh-96px)] w-48">
-        {/*sidebar*/}
-        <div>
-          {/* top */}
-          <div
-            onClick={() => setOpen(true)}
-            className="flex items-center m-4 gap-4 cursor-pointer rounded-2xl p-3 justify-center bg-blue-200"
-          >
-            <img src={assets.plus} alt="newchat" />
-            <div>New Chat</div>
-          </div>
+      <div className="bg-white border-r border-gray-200 flex-col inline-block h-[calc(100vh-96px)] w-60 shadow-md">
+        {/* Top Section */}
+        <div
+          onClick={() => setOpen(true)}
+          className="flex items-center justify-center gap-3 m-4 cursor-pointer bg-blue-100 hover:bg-blue-200 rounded-xl p-3 transition"
+        >
+          <img src={assets.plus} alt="newchat" className="w-5 h-5" />
+          <span className="font-semibold text-blue-700">New Chat</span>
         </div>
-        <div className="ml-6 mt-4">Recent</div>
-        <div>
-          {" "}
-          {/*chathistory*/}
-          {chatlist.map((chatlist) => (
-            <div key={chatlist.chat_id} onClick={() => navigate(`/chatbot/${chatlist.chat_id}/${chatlist.chat_name}`)} className="flex mt-4 gap-4 p-4 w-full hover:bg-blue-200 cursor-pointer items-center">
-              <img src={assets.morechat} alt="recentchat" />
-              <div> {chatlist.chat_name} </div>
+
+        {/* Recent Label */}
+        <div className="ml-6 mt-4 font-semibold text-gray-600 text-sm uppercase tracking-wide">
+          Recent
+        </div>
+
+        {/* Chat History */}
+        <div className="mt-2 overflow-y-auto h-[calc(100%-140px)]">
+          {chatlist.length > 0 ? (
+            chatlist.map((chatlist) => (
+              <div
+                key={chatlist.chat_id}
+                onClick={() =>
+                  navigate(`/chatbot/${chatlist.chat_id}/${chatlist.chat_name}`)
+                }
+                className="flex items-center justify-between px-4 py-3 mx-2 mt-2 rounded-lg hover:bg-blue-100 cursor-pointer transition"
+              >
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <img
+                    src={assets.morechat}
+                    alt="recentchat"
+                    className="w-5 h-5 opacity-70"
+                  />
+                  <span className="text-gray-700 truncate font-medium">
+                    {chatlist.chat_name}
+                  </span>
+                </div>
+                <img
+                  src={assets.deletechat}
+                  alt="deletechat"
+                  // onClick={DeleteChat(chatlist.chat_id)}
+                  className="w-6 h-6 opacity-70 hover:opacity-100 hover:bg-red-100 rounded-full p-1 transition cursor-pointer"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-400 mt-10 text-sm">
+              No chats yet
             </div>
-          ))}:
+          )}
         </div>
       </div>
 
+      {/* Modal for creating new chat */}
       <Modal open={open} onClose={() => setOpen(false)}>
-        <div className="flex flex-col p-4 gap-4">
-          <h1 className="font-bold text-2xl">Create New Chat</h1>
-          <div className="bg-blue-200 p-2 rounded-2xl">
+        <div className="flex flex-col p-6 gap-4">
+          <h1 className="font-bold text-2xl text-blue-700 text-center">
+            Create New Chat
+          </h1>
+          <div className="flex flex-col gap-3 bg-gray-50 p-4 rounded-2xl shadow-inner">
             <input
               value={chatname}
               type="text"
+              placeholder="Enter chat name..."
               onChange={(e) => setChatname(e.target.value)}
+              className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
-              className="bg-blue-300 hover:bg-blue-400 cursor-pointer rounded-2xl p-2 m-2"
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-2 font-semibold transition"
               onClick={CreateChat}
             >
               Create

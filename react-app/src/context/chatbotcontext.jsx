@@ -6,23 +6,28 @@ import axios from "axios";
 export const Context = createContext(null);
 
 const ContextProvider = (props) => {
-  const [ userinput, setUserinput ] = useState("");
-  const [ botresult, setBotresult ] = useState("");
-  const [ botresultresponse, setBotresultresponse ] = useState(false);
-  const [ userinputprompt, setUserinputprompt ] = useState("")
-  const [ currentchatid, setCurrentchatid ] = useState("");
+  const [userinput, setUserinput] = useState("");
+  const [botresult, setBotresult] = useState("");
+  const [botresultresponse, setBotresultresponse] = useState(false);
+  const [userinputprompt, setUserinputprompt] = useState("");
+  const [currentchatid, setCurrentchatid] = useState("");
 
-  const OnSentChatbot = async(userinput) => {
-    setUserinputprompt(userinput)
-    const botres = await main(userinput)
-    setBotresultresponse(true);
-    setBotresult(botres);
-    //insertinputandresponsedatatodb
-    if (userinput, botres)
-      await axios.post("http://localhost:5000/insertchatresponse", { currentchatid ,userinput, botres })
-    setUserinput("");
-    
-  }
+  const OnSentChatbot = async (userinput) => {
+    if (currentchatid) {
+      setUserinputprompt(userinput);
+      const botres = await main(userinput);
+      setBotresultresponse(true);
+      setBotresult(botres);
+      //insertinputandresponsedatatodb
+      if (userinput && botres)
+        await axios.post("http://localhost:5000/insertchatresponse", {
+          currentchatid,
+          userinput,
+          botres,
+        });
+      setUserinput("");
+    } else alert("Please Create Chat Before using Chatbot");
+  };
 
   const ContextValue = {
     OnSentChatbot,
@@ -36,10 +41,8 @@ const ContextProvider = (props) => {
   };
 
   return (
-    <Context.Provider value={ContextValue}>
-      {props.children}
-    </Context.Provider>
-  )
-}
+    <Context.Provider value={ContextValue}>{props.children}</Context.Provider>
+  );
+};
 
 export default ContextProvider;

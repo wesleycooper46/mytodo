@@ -1,5 +1,3 @@
-// API = "AIzaSyBkil0WF4yKOyf31aIVo3XPZ9xVyWZZXfA"
-
 import { GoogleGenAI } from "@google/genai";
 
 export default async function main(prompt) {

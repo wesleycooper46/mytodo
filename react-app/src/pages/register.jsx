@@ -13,19 +13,23 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  // ฟังชันสำหรับสร้างบัญชีใหม่
   const ClickCreateAccount = async (e) => {
     e.preventDefault();
 
+    // เช็คหลังกด submit ว่ากรอกข้อมูลครบทุกช่อง
     if (!firstname || !lastname || !username || !email || !password) {
-      alert("Please Complete the Box");
+      alert("Please complete all fields");
       return;
     }
 
+    // เช็คว่า password กับ confirmpassword ว่าตรงหรือไม่
     if (password !== confirmpassword) {
-      alert("Password do not match");
+      alert("Passwords do not match");
       return;
     }
 
+    // ใช้ method post สำหรับ insert ข้อมูลบัญชีไป database
     try {
       const res = await axios.post("http://localhost:5000/register", {
         firstname,
@@ -34,7 +38,7 @@ const Register = () => {
         email,
         password,
       });
-      console.log(res.data.message);
+      console.log(res.data.message); 
       navigate("/login");
     } catch (err) {
       console.log(err);
@@ -44,79 +48,140 @@ const Register = () => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen bg-[#ede8f5]">
-        <div className="w-[700px] max-w-[92vw] border-[#ADBBDA] rounded-2xl p-6 bg-white">
-          <div className="pb-6">
-            <h1 className="font-bold text-2xl">Create Account</h1>
-          </div>
+      <div className="flex justify-center items-center h-[calc(100vh-96px)] bg-gradient-to-br from-[#ede8f5] to-[#c7d3ed]">
+        <div className="w-[700px] max-w-[90vw] bg-white shadow-xl rounded-2xl p-10 border border-[#d1d5db]">
+          <h1 className="font-extrabold text-3xl text-center text-blue-700 mb-8">
+            Create Account
+          </h1>
 
-          <form className="m-2" onSubmit={ClickCreateAccount}>
-            <div className="grid grid-cols-[100px_1fr_80px_1fr] gap-8 mb-4">
-              <label htmlFor="firstname">First Name: </label>
-              <input
-                id="firstname"
-                type="text"
-                value={firstname}
-                placeholder="Enter your first name"
-                onChange={(e) => setFirstname(e.target.value)}
-              />
-
-              <label htmlFor="lastname">Last Name: </label>
-              <input
-                id="lastname"
-                type="text"
-                value={lastname}
-                placeholder="Enter your last name"
-                onChange={(e) => setLastname(e.target.value)}
-              />
+          <form className="space-y-6" onSubmit={ClickCreateAccount}>
+            {/* Firstname & Lastname */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="firstname"
+                  className="block font-medium text-gray-700 mb-2"
+                >
+                  First Name
+                </label>
+                <input
+                  id="firstname"
+                  type="text"
+                  value={firstname}
+                  placeholder="Enter your first name"
+                  onChange={(e) => setFirstname(e.target.value)}
+                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="lastname"
+                  className="block font-medium text-gray-700 mb-2"
+                >
+                  Last Name
+                </label>
+                <input
+                  id="lastname"
+                  type="text"
+                  value={lastname}
+                  placeholder="Enter your last name"
+                  onChange={(e) => setLastname(e.target.value)}
+                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-[120px_1fr] gap-4">
-              <label htmlFor="username" className="w-[200px]">Username: </label>
+
+            {/* Username */}
+            <div>
+              <label
+                htmlFor="username"
+                className="block font-medium text-gray-700 mb-2"
+              >
+                Username
+              </label>
               <input
                 id="username"
                 type="text"
                 value={username}
                 placeholder="Enter your username"
                 onChange={(e) => setUsername(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+            </div>
 
-              <label htmlFor="email">Email</label>
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block font-medium text-gray-700 mb-2"
+              >
+                Email
+              </label>
               <input
                 id="email"
                 type="email"
                 value={email}
                 placeholder="Enter your email"
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+            </div>
 
-              <label htmlFor="password">Password</label>
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block font-medium text-gray-700 mb-2"
+              >
+                Password
+              </label>
               <input
                 id="password"
                 type="password"
                 value={password}
                 placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+            </div>
 
-              <label htmlFor="confirmpassword">Confirm your Password</label>
+            {/* Confirm Password */}
+            <div>
+              <label
+                htmlFor="confirmpassword"
+                className="block font-medium text-gray-700 mb-2"
+              >
+                Confirm Password
+              </label>
               <input
                 id="confirmpassword"
                 type="password"
                 value={confirmpassword}
                 placeholder="Re-enter your password"
                 onChange={(e) => setConfirmpassword(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
+            {/* Button */}
             <button
-              className="border-2 rounded-2xl pt-1 pl-2 pr-2 pb-1 m-2 hover:cursor-pointer"
               type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold rounded-xl py-3 mt-4 shadow-md cursor-pointer"
             >
-              {" "}
               Create Account
             </button>
-            <div className="hover:text-blue-600 cursor-pointer" onClick={() => {navigate("/login")}}>
-              already have account?
+
+            {/* Login Redirect */}
+            <div className="text-center mt-4">
+              <p className="text-gray-600">
+                Already have an account?{" "}
+                <span
+                  onClick={() => navigate("/login")}
+                  className="text-blue-600 hover:underline cursor-pointer font-semibold"
+                >
+                  Log in
+                </span>
+              </p>
             </div>
           </form>
         </div>

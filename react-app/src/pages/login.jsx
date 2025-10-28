@@ -12,15 +12,14 @@ const Login = () => {
   const ClickLogin = async (e) => {
     e.preventDefault();
 
+    // ใช้ axios method post สำหรับส่งข้อมูล username, password เพื่อไปเทียบใน backend
     try {
       const res = await axios.post("http://localhost:5000/login", {
         username,
         password,
       });
-      const { user_id, message } = res.data;
-      console.log("data : ", message);
-      localStorage.setItem("user_id", user_id);
-      console.log("User Id: ", user_id);
+      const { user_id, message } = res.data; // รับค่า userid เพื่อจะเก็บใน localstorage
+      localStorage.setItem("user_id", user_id);// เก็บค่า userid ไว้ใน localstorage เพื่อเป็น markpoint ว่าเป็น user คนไหน
       alert(message);
       navigate("/Dashboard");
     } catch (err) {
@@ -31,44 +30,64 @@ const Login = () => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-center min-h-screen items-center">
-        <div className="border-2 p-6 rounded-2xl w-[450px] ">
-          <h1 className="mb-4 ml-4 text-3xl font-bold"> Login </h1>
-          <form className="ml-4" onSubmit={ClickLogin}>
-            <div className="grid grid-cols-[80px_1fr] gap-4">
-              <label htmlFor="username"> Username : </label>
+      <div className="flex justify-center items-center h-[calc(100vh-96px)] bg-gradient-to-br from-[#ede8f5] to-[#c7d3ed]">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-10 w-[400px] max-w-[90vw]">
+          <h1 className="text-3xl font-extrabold text-blue-700 text-center mb-8">
+            Login
+          </h1>
+
+          <form onSubmit={ClickLogin} className="space-y-6">
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Username
+              </label>
               <input
                 type="text"
+                id="username"
                 value={username}
-                name="username"
-                className="border-2"
                 onChange={(e) => setUsername(e.target.value)}
-              />
-
-              <label htmlFor="password"> Password : </label>
-              <input
-                type="password"
-                value={password}
-                name="password"
-                className="border-2"
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your username"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
-            <div className="flex justify-center items-baseline gap-3">
-              <button
-                className="border-2 rounded-2xl pt-1 pl-2 pr-2 pb-1 mt-4 hover:cursor-pointer hover:bg-blue-400"
-                type="submit"
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-medium mb-2"
               >
-                Login
-              </button>
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
 
-              <div
-                className="cursor-pointer hover:text-blue-600"
-                onClick={() => navigate("/register")}
-              >
-                Create an Accout!
-              </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold rounded-xl py-3 mt-4 shadow-md cursor-pointer"
+            >
+              Login
+            </button>
+
+            <div className="text-center mt-4">
+              <p className="text-gray-600">
+                Don’t have an account?{" "}
+                <span
+                  onClick={() => navigate("/register")}
+                  className="text-blue-600 hover:underline cursor-pointer font-semibold"
+                >
+                  Create one
+                </span>
+              </p>
             </div>
           </form>
         </div>
