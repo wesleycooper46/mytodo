@@ -3,7 +3,7 @@ import ChatSideBar from "../components/ChatSideBar";
 import Navbar from "../components/navbar";
 import { Context } from "../context/chatbotcontext";
 import { assets } from "../assets/img/img";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ChatBot = () => {
@@ -17,7 +17,10 @@ const ChatBot = () => {
     setCurrentchatid,
   } = useContext(Context);
 
-  const { chatid } = useParams();
+  const navigate = useNavigate();
+
+  const { chatid, chatname } = useParams();
+  const userid = localStorage.getItem("user_id");
 
   console.log("chat id : ", chatid);
 
@@ -37,17 +40,50 @@ const ChatBot = () => {
     FetchChatHistory();
   }, [chatid, botresult]);
 
+  const ClickDeleteChat = async() => {
+    try{
+      const res = await axios.delete(`http://localhost:5000/deletechatid=${chatid}`);
+      alert(res.data.message)
+      navigate(`/chatbot/${userid}`)
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   return (
     <>
       <Navbar />
       <div className="flex h-[calc(100vh-96px)] overflow-hidden bg-gradient-to-br from-[#ede8f5] to-[#c7d3ed]">
-        <ChatSideBar />
+        <ChatSideBar chatidfromchatbot={chatid} />
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <nav className="shrink-0 p-4 border-b bg-white shadow-sm">
-            <div className="font-bold text-xl text-blue-700 text-center">
-              ChatBot Assistant
+          <nav className="flex items-center justify-between p-4 border-b bg-white shadow-sm">
+            {/* Left: Chat title */}
+            <div>
+              {chatname ? (
+                <div className="font-bold text-xl text-blue-700">
+                  ChatBot Assistant :{" "}
+                  <span className="text-gray-700">{chatname} Chat</span>
+                </div>
+              ) : (
+                <div className="font-bold text-xl text-blue-700">
+                  ChatBot Assistant
+                </div>
+              )}
             </div>
+
+            {/* Right: Delete button */}
+
+            {chatid && chatname ? (
+              <div onClick={ClickDeleteChat} className="flex items-center gap-2 cursor-pointer bg-red-50 hover:bg-red-100 text-red-600 rounded-lg px-3 py-1 transition">
+                <img
+                  className="w-5 h-5 opacity-80"
+                  src={assets.deletechat}
+                  alt="deletechat"
+                />
+                <span className="font-medium text-sm">Delete Chat</span>
+              </div>
+            ) : null}
           </nav>
 
           {/* Chat Area */}

@@ -214,4 +214,19 @@ app.get("/fetchchathistory", (req, res) => {
   })
 })
 
+app.delete("/deletechatid=:chatid", (req, res) => {
+  const { chatid } = req.params;
+  const sql = "DELETE FROM chatbot WHERE chat_id = ?";
+
+  console.log("Chat ID 0n Delete : ", chatid);
+
+  db.query(sql, [ chatid ], (err) => {
+    if (err) return res.status(500).json({error: err.message})
+    
+    res.json({
+      message: "Delete Chat Complete"
+    })
+  })
+})
+
 app.listen(PORT, () => console.log("Server Running At Port 5000"));

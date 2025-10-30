@@ -4,7 +4,7 @@ import Modal from "./modal";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ChatSideBar = () => {
+const ChatSideBar = (chatidfromchatbot) => {
   const [open, setOpen] = useState(false);
   const [chatname, setChatname] = useState("");
   const [chatlist, setChatlist] = useState([]);
@@ -25,16 +25,6 @@ const ChatSideBar = () => {
     }
   };
 
-  // const DeleteChat = async(chatid) => {
-  //   console.log("Chat ID On Delete : ", chatid);
-  //   try {
-  //     const res = await axios.delete("http://localhost:5000/deletechat", { chatid });
-  //     console.log(res.data.message);
-  //   } catch (err){
-  //     console.log(err)
-  //   }
-  // }
-
   useEffect(() => {
     const FetchChatList = async () => {
       const res = await axios.get("http://localhost:5000/fetchchatlist", {
@@ -46,7 +36,7 @@ const ChatSideBar = () => {
     };
 
     FetchChatList();
-  }, [userid]);
+  }, [userid, chatidfromchatbot]);
 
   return (
     <>
@@ -86,12 +76,6 @@ const ChatSideBar = () => {
                     {chatlist.chat_name}
                   </span>
                 </div>
-                <img
-                  src={assets.deletechat}
-                  alt="deletechat"
-                  // onClick={DeleteChat(chatlist.chat_id)}
-                  className="w-6 h-6 opacity-70 hover:opacity-100 hover:bg-red-100 rounded-full p-1 transition cursor-pointer"
-                />
               </div>
             ))
           ) : (
