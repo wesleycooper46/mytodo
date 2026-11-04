@@ -100,6 +100,9 @@ jobs:
   dast-and-container-scan:
     needs: [sast-scan, backend-test, frontend-build]
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
     services:
       mysql:
         image: mysql:8.0
