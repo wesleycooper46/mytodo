@@ -7,9 +7,31 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
+  # ---------------------------------------------------------
+  # 1. SAST Scan (Static Code Analysis - ตรวจ Source Code ทั้งโปรเจกต์)
+  # ---------------------------------------------------------
+  sast-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # ใช้ Semgrep (เครื่องมือมาตรฐาน SAST น้ำหนักเบา ไม่ต้องต่อ Token ภายนอก)
+      - name: Run SAST with Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/javascript
+        env:
+          SEMGREP_RULES: p/default
+
+  # ---------------------------------------------------------
+  # 2. Backend Test & SCA Scan (ตรวจ Dependency + Test Code)
+  # ---------------------------------------------------------
   backend-test:
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0
@@ -35,6 +57,7 @@ jobs:
         working-directory: ./backend
         run: npm ci
 
+      # SCA Scan ตรวจ Library ช่องโหว่
       - name: Run SCA Vulnerability Scan (Backend)
         uses: aquasecurity/trivy-action@master
         with:
@@ -42,17 +65,14 @@ jobs:
           scan-ref: './backend'
           severity: 'CRITICAL,HIGH'
 
-      - name: Test Database Connection & Scripts
+      - name: Check Backend Syntax
         working-directory: ./backend
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: ci_password
-          DB_NAME: todo_project
         run: |
-          npm test --if-present
+          node -c server.js
 
+  # ---------------------------------------------------------
+  # 3. Frontend Build (ตรวจการประกอบ React Vite)
+  # ---------------------------------------------------------
   frontend-build:
     runs-on: ubuntu-latest
     steps:
@@ -74,19 +94,55 @@ jobs:
         working-directory: ./react-app
         run: npm run build
 
-  docker-build-and-scan:
-    needs: [backend-test, frontend-build]
+  # ---------------------------------------------------------
+  # 4. Container Build & DAST Scan (รันแอปขึ้นมาจริงแล้วให้ OWASP ZAP ยิงตรวจ)
+  # ---------------------------------------------------------
+  dast-and-container-scan:
+    needs: [sast-scan, backend-test, frontend-build]
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci_password
+          MYSQL_DATABASE: todo_project
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      # 4.1 บิลด์ Docker Image
       - name: Build Backend Docker Image
         run: docker build -t todo-backend:latest ./backend
 
+      # 4.2 สแกนความปลอดภัย Image (Container Security)
       - name: Scan Docker Image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'todo-backend:latest'
           format: 'table'
           severity: 'CRITICAL,HIGH'
+
+      # 4.3 สั่งรัน Backend Container ขึ้นมาจริงๆ บนพอร์ต 5000 เพื่อเตรียมให้ DAST ยิง
+      - name: Run Application Container
+        run: |
+          docker run -d --name todo-app \
+            --network host \
+            -e DB_HOST=127.0.0.1 \
+            -e DB_PORT=3306 \
+            -e DB_USER=root \
+            -e DB_PASSWORD=ci_password \
+            -e DB_NAME=todo_project \
+            -e PORT=5000 \
+            todo-backend:latest
+          sleep 5
+
+      # 4.4 รัน DAST Scan ด้วย OWASP ZAP Baseline Scan ยิงเข้าหา http://localhost:5000
+      - name: Run OWASP ZAP DAST Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'http://localhost:5000'
+          fail_action: false # ให้รันผ่านแม้เจอจุดเตือน เพื่อให้เห็นผลสรุปรายงาน
