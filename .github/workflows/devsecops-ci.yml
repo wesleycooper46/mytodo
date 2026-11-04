@@ -1,0 +1,92 @@
+name: Full-Stack CI & DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci_password
+          MYSQL_DATABASE: todo_project
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run SCA Vulnerability Scan (Backend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Test Database Connection & Scripts
+        working-directory: ./backend
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: ci_password
+          DB_NAME: todo_project
+        run: |
+          npm test --if-present
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: react-app/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: ./react-app
+        run: npm ci
+
+      - name: Build Vite App
+        working-directory: ./react-app
+        run: npm run build
+
+  docker-build-and-scan:
+    needs: [backend-test, frontend-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Build Backend Docker Image
+        run: docker build -t todo-backend:latest ./backend
+
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'todo-backend:latest'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
